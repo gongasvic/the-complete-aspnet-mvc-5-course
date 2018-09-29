@@ -1,0 +1,25 @@
+﻿@model Vidly.Models.Customer
+
+@{
+    ViewBag.Title = "title";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Name (@Html.ActionLink("edit", "Edit", new { id = Model.Id }))</h2>
+
+<div class="well well-lg">
+
+    <h3>Basic Information</h3><br />
+    <b>@Html.LabelFor(m => m.Sex):</b>@Model.Sex<br />
+    <b>@Html.LabelFor(m => m.Email):</b>@Model.Email<br />
+    @if (Model.Dob.HasValue)
+    {
+        <b>@Html.LabelFor(m => m.Dob):</b>@Model.Dob.Value.Date.ToString("d")<br />
+        <b>Age:</b>
+        @(DateTime.Today.Month > Model.Dob.Value.Month ? (DateTime.Today.Year - Model.Dob.Value.Year) : (DateTime.Today.Year - Model.Dob.Value.Year) - 1)<br />
+    }
+    <b>@Html.LabelFor(m => m.Newsletter):</b>@Model.Newsletter<br />
+    <h3>Membership Information</h3><br />
+    <b>@Html.LabelFor(m => m.MembershipTypeId):</b> @Model.MembershipType.Name<br />
+    <b>Membership Discount Rate:</b> @Model.MembershipType.Discount<br />
+</div>

@@ -1,0 +1,24 @@
+﻿@model Vidly.Models.Movie
+
+@{
+    ViewBag.Title = "title";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Name (@Html.ActionLink("Edit", "Edit", new { id = Model.Id }))</h2>
+
+<p>@Html.LabelFor(m => m.MovieGenreId): @Model.MovieGenre.Name</p>
+<p>@Html.LabelFor(m => m.CreationDate): @Model.CreationDate</p>
+<p>@Html.LabelFor(m => m.ReleaseDate): @Model.ReleaseDate</p>
+
+<p>
+    @Html.LabelFor(m => m.AvailableUnits): @Model.AvailableUnits
+    @if (Model.AvailableUnits > 0)
+    {
+        Html.ActionLink("Rent", "Rent", new { id = Model.Id });
+    }
+</p>
+<div class="well">
+
+    @Model.Description
+</div>

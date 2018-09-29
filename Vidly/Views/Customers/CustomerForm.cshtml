@@ -1,0 +1,68 @@
+﻿@model Vidly.ViewModels.CustomerFormViewModel
+
+@{
+    ViewBag.Title = "Customer Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+    var title = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["Action"]).ToLower();
+    if (title == "new")
+    {
+        title = "New";
+    }
+    else if (title == "edit")
+    {
+        title = "Edit";
+    }
+
+}
+
+<h2>@title Customer Form</h2>
+
+
+@using (Html.BeginForm("Save", "Customers"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Name)
+        @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.Name)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Dob)
+        @Html.TextBoxFor(m => m.Customer.Dob, "{0:d MMMM yyyy}", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.Dob)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Email)
+        @Html.TextBoxFor(m => m.Customer.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.Email)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Sex)
+        @Html.DropDownListFor(m => m.Customer.Sex, new SelectList(new List<string>() { "Male", "Female", "Noob", "Transgender" }), "Select Sex", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.Sex)
+
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.CountryCode)
+        @Html.TextBoxFor(m => m.Customer.CountryCode, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.CountryCode)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.PhoneNumber)
+        @Html.TextBoxFor(m => m.Customer.PhoneNumber, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.PhoneNumber)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.MembershipTypeId)
+        @Html.DropDownListFor(m => m.Customer.MembershipTypeId, new SelectList(Model.MembershipTypes, "Id", "Name"), "Select Membership Type", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.MembershipTypeId)
+    </div>
+    <div class="checkbox">
+        <label>
+            @Html.CheckBoxFor(m => m.Customer.Newsletter) Is Subscribed to Newsletter?
+        </label>
+    </div>
+    @Html.HiddenFor(m => m.Customer.Id)
+    <button type="submit" class="btn btn-primary">Save</button>
+}
