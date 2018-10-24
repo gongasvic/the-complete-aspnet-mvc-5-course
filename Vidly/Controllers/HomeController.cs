@@ -1,15 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Diagnostics;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
+using Vidly.Models;
 
 namespace Vidly.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Index(string message, GenericData.MessageTypes? messageType)
         {
+            if (messageType != null || !message.IsNullOrWhiteSpace())
+            {
+                ViewBag.StatusMessage = message;
+                ViewBag.MessageTypeClass = GenericData.MessageTypeClass((GenericData.MessageTypes)messageType);
+            }
             return View();
         }
 

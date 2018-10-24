@@ -7,23 +7,27 @@
 
 <h2>Movie List</h2>
 
-@Html.ActionLink("New Movie", "New", null, new { @class = "btn btn-primary" })
-
 <table class="table table-hover">
     <thead>
         <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Genre</th>
+            <th class="text-center">#</th>
+            <th class="text-center">Name</th>
+            <th class="text-center">Genre</th>
+            <th class="text-center"><a href="@Url.Action("New", "Movies")" title="New Customer"><i class="fas fa-plus"></i></a></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var movie in Model)
         {
             <tr>
-                <td>@movie.Id</td>
-                <td>@Html.ActionLink(movie.Name, "Details", new { id = movie.Id })</td>
-                <td>@movie.MovieGenre.Name</td>
+                <td class="text-center">@movie.Id</td>
+                <td>@movie.Name</td>
+                <td class="text-center">@movie.MovieGenre.Name</td>
+                <td class="text-center">
+                    <a href="@Url.Action("Details", "Movies",new { id = @movie.Id })" title="View Movie" style="margin-right:5px"><i class="far fa-eye"></i></a>
+                    <a href="@Url.Action("Edit", "Movies",new { id = @movie.Id })" title="Edit Movie" style="margin-right:5px"><i class="fas fa-edit"></i></a>
+                    <a href="@Url.Action("Delete", "Movies",new { id = @movie.Id })" title="Delete Movie"><i class="fas fa-trash-alt"></i></a>
+                </td>
             </tr>
         }
     </tbody>

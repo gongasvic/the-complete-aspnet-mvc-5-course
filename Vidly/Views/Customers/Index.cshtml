@@ -5,27 +5,41 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div class="alert @ViewBag.MessageTypeClass" role="alert">
+    @ViewBag.StatusMessage
+</div>
+
 <h2>Customers</h2>
 
-@Html.ActionLink("New Customer", "New", null, new { @class = "btn btn-primary" })
 
 <table class="table table-hover">
     <thead>
         <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Membership Type</th>
-            <th>Membership Discount</th>
+            <th class="text-center">#</th>
+            <th class="text-center">Name</th>
+            <th class="text-center">Membership Type</th>
+            <th class="text-center">Membership Discount</th>
+            <th class="text-center"><a href="@Url.Action("New", "Customers")" title="New Customer"><i class="fas fa-plus"></i></a></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var customer in Model)
         {
             <tr>
-                <td>@customer.Id</td>
-                <td>@Html.ActionLink(customer.Name, "Details", new { id = customer.Id })</td>
-                <td>@customer.MembershipType.Name</td>
-                <td>@customer.MembershipType.Discount%</td>
+                <td class="text-center">@customer.Id</td>
+                <td>@customer.Name</td>
+                <td class="text-center">@customer.MembershipType.Name</td>
+                <td class="text-center">@customer.MembershipType.Discount%</td>
+                <td class="text-center">
+                    <a href="@Url.Action("Details", "Customers",new { id = @customer.Id })" title="View Customer" style="margin-right:5px"><i class="far fa-eye"></i></a>
+                    <a href="@Url.Action("Edit", "Customers",new { id = @customer.Id })" title="Edit Customer"><i class="fas fa-user-edit"></i></a>
+                    @using (Html.BeginForm("Delete", "Customers", new { id = @customer.Id }, FormMethod.Post, new { style = "display: inline;" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        //TODO: place icon inline
+                        <button type="submit" class="deleteIcon"><i class="fas fa-user-slash"></i></button>
+                    }
+                </td>
             </tr>
         }
     </tbody>

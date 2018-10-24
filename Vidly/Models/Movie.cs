@@ -19,16 +19,20 @@ namespace Vidly.Models
         public string Description { get; set; }
 
         [Required]
+        [Display(Name = "Release Date")]
         public DateTime ReleaseDate { get; set; }
 
         [Required]
+        [Display(Name = "Creation Date")]
         public DateTime CreationDate { get; set; }
 
         [Required]
+        [Display(Name = "Available Units")]
         public int AvailableUnits { get; set; }
 
         //FK MovieGenre
         [Required]
+        [Display(Name = "Movie Genre")]
         public byte MovieGenreId { get; set; }
         public MovieGenre MovieGenre { get; set; }
     }

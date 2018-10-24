@@ -2,16 +2,18 @@
 
 @{
     ViewBag.Title = "Customer Form";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
 
 
     var title = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["Action"]).ToLower();
+    var edit = false;
     if (title == "new")
     {
         title = "New";
     }
     else if (title == "edit")
     {
+        edit = true;
         title = "Edit";
     }
 
@@ -26,6 +28,11 @@
         @Html.LabelFor(m => m.Customer.Name)
         @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.Customer.Name)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Handler)
+        @( !edit ? @Html.TextBoxFor(m => m.Customer.Handler, new { @class = "form-control" }) : @Html.TextBoxFor(m => m.Customer.Handler, new { @class = "form-control", disabled = "disabled" }) )
+        @Html.ValidationMessageFor(m => m.Customer.Handler)
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Customer.Dob)
@@ -64,5 +71,11 @@
         </label>
     </div>
     @Html.HiddenFor(m => m.Customer.Id)
+    @Html.HiddenFor(m => m.Customer.UserId)
     <button type="submit" class="btn btn-primary">Save</button>
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
 }

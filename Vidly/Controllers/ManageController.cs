@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -32,9 +33,9 @@ namespace Vidly.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -58,11 +59,15 @@ namespace Vidly.Controllers
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
                 : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
                 : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
-                : message == ManageMessageId.Error ? "An error has occurred."
                 : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : message == ManageMessageId.UserDeleteError ? "An error has occurred deleting user."
+                : message == ManageMessageId.Error ? "An error has occurred."
                 : "";
-
+            if (message == ManageMessageId.UserDeleteError || message == ManageMessageId.Error)
+                ViewBag.MessageTypeClass = GenericData.MessageTypeClass(GenericData.MessageTypes.Danger);
+            else if (ViewBag.StatusMessage != "")
+                ViewBag.MessageTypeClass = GenericData.MessageTypeClass(GenericData.MessageTypes.Success);
             var userId = User.Identity.GetUserId();
             var model = new IndexViewModel
             {
@@ -73,6 +78,45 @@ namespace Vidly.Controllers
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
             return View(model);
+        }
+
+        //
+        // POST: /Manage/Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Delete()
+        {
+
+            var message = "User was not deleted";
+            var messageType = GenericData.MessageTypes.Danger;
+            var userId = User.Identity.GetUserId();
+            var context = new ApplicationDbContext();
+            var customerContext = context.Customers;
+            var dbCustomer = customerContext.SingleOrDefault(c => c.UserId == userId);
+            try
+            {
+                if (dbCustomer != null)
+                    customerContext.Remove(dbCustomer);
+
+                var user = await UserManager.FindByIdAsync(userId); //use async find
+                var result = await UserManager.DeleteAsync(user);
+                if (result.Succeeded)
+                {
+                    context.SaveChanges();
+                    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                    message = "User deleted successfuly";
+                    messageType = GenericData.MessageTypes.Success;
+                }
+
+            }
+            catch (Exception e)
+            {
+                context.Dispose();
+                return RedirectToAction("Index", new { Message = ManageMessageId.UserDeleteError });
+            }
+            context.Dispose();
+            return RedirectToAction("Index", "Home", new { Message = message, MessageType = messageType });
+
         }
 
         //
@@ -333,7 +377,7 @@ namespace Vidly.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -381,9 +425,10 @@ namespace Vidly.Controllers
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
-            Error
+            Error,
+            UserDeleteError
         }
 
-#endregion
+        #endregion
     }
 }

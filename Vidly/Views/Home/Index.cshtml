@@ -1,6 +1,11 @@
-﻿@{
+﻿@using Vidly.Models
+@{
     ViewBag.Title = "Home Page";
 }
+
+<div class="alert @ViewBag.MessageTypeClass" role="alert">
+    @ViewBag.StatusMessage
+</div>
 
 <div class="jumbotron">
     <h1>ASP.NET</h1>
